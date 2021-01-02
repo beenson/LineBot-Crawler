@@ -1,5 +1,5 @@
 {
-  "name": "linechat",
+  "name": "project",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,5 +7,9 @@
     "start": "node ."
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "linebot": "^1.6.1"
+  }
 }
