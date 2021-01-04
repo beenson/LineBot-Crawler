@@ -1,5 +1,8 @@
 var linebot = require('linebot');
 var express = require('express');
+var request = require("request");
+var cheerio = require("cheerio");
+let axios = require("axios");
 
 var bot = linebot({
   channelId: '1655539879',
@@ -32,7 +35,7 @@ bot.on('message', function(event) {
             var target = $(".rate-content-sight.text-right.print_hide");
             data = target[15].children[0].data.trim();
             console.log(data);
-            
+
             //收到文字訊息時，直接把收到的訊息傳回去
               event.reply(msg).then(function(data) {
                 // 傳送訊息成功時，可在此寫程式碼 
