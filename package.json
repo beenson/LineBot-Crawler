@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.5",
     "express": "^4.17.1",
-    "linebot": "^1.6.1"
+    "linebot": "^1.6.1",
+    "request": "^2.88.2"
   }
 }
