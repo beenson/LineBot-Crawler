@@ -1,6 +1,5 @@
 var linebot = require('linebot');
 var express = require('express');
-var request = require("request");
 var cheerio = require("cheerio");
 let axios = require("axios");
 
