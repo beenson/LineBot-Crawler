@@ -1,8 +1,5 @@
 var linebot = require('linebot');
 var express = require('express');
-var request = require("request");
-var cheerio = require("cheerio");
-let axios = require("axios");
 
 var bot = linebot({
   channelId: '1655539879',
@@ -30,23 +27,24 @@ bot.on('message', function(event) {
   if (event.message.type = 'text') {
     var msg = event.message.text;
 
+    /*
     axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm").then((res) => { 
             var $ = cheerio.load(res.data);
             var target = $(".rate-content-sight.text-right.print_hide");
             data = target[15].children[0].data.trim();
-            console.log(data);
-
-            //收到文字訊息時，直接把收到的訊息傳回去
-              event.reply(data).then(function(data) {
-                // 傳送訊息成功時，可在此寫程式碼 
-                console.log(data);
-              }).catch(function(error) {
-                // 傳送訊息失敗時，可在此寫程式碼 
-                console.log('錯誤產生，錯誤碼：'+error);
-              }); })
+            console.log(data); })
         .catch((error) => { console.error(error) })
-        .finally(() => {  不論失敗成功皆會執行  })
+        .finally(() => {  不論失敗成功皆會執行 // })
+    */
     
+  //收到文字訊息時，直接把收到的訊息傳回去
+    event.reply(msg).then(function(data) {
+      // 傳送訊息成功時，可在此寫程式碼 
+      console.log(msg);
+    }).catch(function(error) {
+      // 傳送訊息失敗時，可在此寫程式碼 
+      console.log('錯誤產生，錯誤碼：'+error);
+    });
   }
 });
 
