@@ -14,7 +14,7 @@ async function reply(event){
     if (event.message.type = 'text') {
       var msg = event.message.text;
   
-      axios.get("https://rate.bot.com.tw/xrt?Lang=zh-TW").then((res) => { 
+      await axios.get("https://rate.bot.com.tw/xrt?Lang=zh-TW").then((res) => { 
               var $ = cheerio.load(res.data);
               var target = $(".rate-content-sight.text-right.print_hide");
               data = target[15].children[0].data.trim();
