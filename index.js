@@ -40,6 +40,7 @@ async function crawlPrice() {
             currMap.set(spli[1].substring(1, 4), index);
         });
         currList = temp.join('\r\n');
+        console.log(currMap);
     }
 
     price = [];
@@ -102,6 +103,8 @@ async function reply(event){
         }     
     }
 }
+
+crawlPrice();
 
 //這一段的程式是專門處理當有人傳送文字訊息給LineBot時，我們的處理回應
 bot.on('message', reply);
