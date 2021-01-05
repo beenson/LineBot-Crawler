@@ -57,7 +57,7 @@ async function listCurrency() {
 
 async function askCurrency(input) {
     await crawlPrice();
-    let i = contain(input, currency);
+    let i = await contain(input, currency);
     if(Number.isInteger(input)) {i = parseInt(input);}
     if(i != -1)
         return price[i];
@@ -86,7 +86,7 @@ async function reply(event){
         switch(state) {
             case 0:
                 if(await contain(rec, currency) != -1) {
-                    msg = askCurrency(rec);
+                    msg = await askCurrency(rec);
                     break;
                 }
 
