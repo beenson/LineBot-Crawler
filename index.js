@@ -25,7 +25,7 @@ async function crawlPrice() {
                 currency.push(element.children[0].data.trim());
         });
     }
-    
+
     price = [];
     var pri = $(".rate-content-sight.text-right.print_hide");
     pri.each((index, element) => {
@@ -55,7 +55,6 @@ async function reply(event){
         var msg = event.message.text;
 
         let data = await listCurrency();
-        console.log(data);
         //收到文字訊息時，直接把收到的訊息傳回去
         event.reply(data).then(function(data) {
             // 傳送訊息成功時，可在此寫程式碼 
