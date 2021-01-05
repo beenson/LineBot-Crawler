@@ -11,7 +11,6 @@ var userState = new Map();
 
 let currency = [];
 let currList = '';
-let currMap = new Map();
 let price = [];
 
 var bot = linebot({
@@ -24,23 +23,22 @@ var bot = linebot({
 async function crawlPrice() {
     let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
     var $ = cheerio.load(res.data);
-    if(currency.length == 0) {
+    if(currList == '') {
+        let temp1 = [], temp2 = [];
         var cur = $(".visible-phone.print_hide");
         cur.each((index, element) => {
             if(element.children.length == 1)
-                currency.push(element.children[0].data.trim());
+                temp1.push(element.children[0].data.trim());
         });
 
-        let temp = [];
-        currency.forEach((element, index) => {
-            temp.push((index + 1) + '.' + element);
+        temp1.forEach((element, index) => {
+            temp2.push((index + 1) + '.' + element);
             
             let spli = element.split(' ');
-            currMap.set(spli[0], index);
-            currMap.set(spli[1].substring(1, 4), index);
+            currency.push(spli[0], index);
+            currency.push(spli[1].substring(1, 4), index);
         });
-        currList = temp.join('\r\n');
-        console.log(currMap);
+        currList = temp2.join('\r\n');
     }
 
     price = [];
@@ -59,21 +57,23 @@ async function listCurrency() {
 
 async function askCurrency(input) {
     await crawlPrice();
-    let i = -1;
+    let i = contain(input, currency);
     if(Number.isInteger(input)) {i = parseInt(input);}
-    if(currMap.has(input)) {i = currMap.get(input);}
     if(i != -1)
         return price[i];
     else
         return "輸入錯誤!";
 }
 
-/*$"OnMessage 訊息事件\n" +
-$"類型: {ev.Type.ToString()}\n" +
-$"時間: {ev.Timestamp}\n" +
-$"來源類型: {ev.Source.Type.ToString()}\n" +
-$"頻道 ID: {ev.Source.Id}\n" +
-$"用戶 ID: {ev.Source.UserId}");*/
+async function contain(txt, arr) {
+    let index = -1;
+    arr.forEach((e, i) => {
+        if(txt.includes(e))
+            index = i / 2;
+    });
+    return index;
+}
+
 async function reply(event){
     if (event.message.type = 'text') {
         let userId = event.source.userId;
@@ -81,14 +81,23 @@ async function reply(event){
         if(!userState.has(userId)) {userState.set(userId, 0);}
         
         let state = userState.get(userId);
+        let rec = event.message.text;
         let msg;
         switch(state) {
             case 0:
-                msg = await listCurrency();
-                userState.set(userId, 1);
+                if(currMap.has(rec)) {
+                    askCurrency(msg);
+                    break;
+                }
+
+                if(rec.includes('匯率')) {
+                    msg = await listCurrency();
+                    userState.set(userId, 1);
+                    break;
+                }
                 break;
             case 1:
-                msg = await askCurrency(event.message.text);
+                msg = await askCurrency(rec);
                 userState.set(userId, 0);
                 break;
         }
@@ -103,6 +112,25 @@ async function reply(event){
         }     
     }
 }
+/*{
+  type: 'message',
+  replyToken: '71508909ef9a4e79b92954bfc8da0862',
+  source: {
+    userId: 'U9d5868633c1febd1db045277e64726cc',
+    type: 'user',
+    profile: [Function],
+    member: [Function]
+  },
+  timestamp: 1609857295470,
+  mode: 'active',
+  message: {
+    type: 'text',
+    id: '13329988909525',
+    text: '.',
+    content: [Function]
+  },
+  reply: [Function]
+}*/
 
 crawlPrice();
 
