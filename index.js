@@ -30,8 +30,8 @@ async function crawlPrice() {
     });
 };
 
-async function listCurrenct() {
-    let temp = []
+async function listCurrency() {
+    let temp = [];
     currency.forEach((element, index) => {temp.push((index + 1) + '.' + element)})
     return temp.join('\r\n')
 }
@@ -44,12 +44,13 @@ $"頻道 ID: {ev.Source.Id}\n" +
 $"用戶 ID: {ev.Source.UserId}");*/
 async function reply(event){
     if (event.message.type = 'text') {
-        console.log(event.message.UserId);
+        console.log(event);
         if(!userState.has(event.message.UserId)){}
         
         var msg = event.message.text;
 
-        let data = 
+        let data = await listCurrency();
+        console.log(data);
         //收到文字訊息時，直接把收到的訊息傳回去
         event.reply(data).then(function(data) {
             // 傳送訊息成功時，可在此寫程式碼 
