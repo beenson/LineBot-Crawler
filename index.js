@@ -4,9 +4,15 @@ var request = require("request");
 var cheerio = require("cheerio");
 let axios = require("axios");
 var userState = new Map();
+//0 : Request
+//1 : Asking Currency
+//2 : Asking Weather
+//3 : Asking Stocks
 
-let currency = []
-let price = []
+let currency = [];
+let currList = '';
+let currMap = new Map();
+let price = [];
 
 var bot = linebot({
   channelId: '1655539879',
@@ -24,6 +30,16 @@ async function crawlPrice() {
             if(element.children.length == 1)
                 currency.push(element.children[0].data.trim());
         });
+
+        currency.forEach((element, index) => {
+            let temp = [];
+            temp.push((index + 1) + '.' + element);
+            currList = temp.join('\r\n');
+            
+            let spli = element.split(' ');
+            currMap.set(spli[0], index);
+            currMap.set(spli[1].substring(1, 4), index);
+        });
     }
 
     price = [];
@@ -35,10 +51,20 @@ async function crawlPrice() {
 };
 
 async function listCurrency() {
+    if(currList == '')
+        await crawlPrice();
+    return currList;
+}
+
+async function askCurrency(input) {
     await crawlPrice();
-    let temp = [];
-    currency.forEach((element, index) => {temp.push((index + 1) + '.' + element)})
-    return temp.join('\r\n')
+    let i = -1;
+    if(Number.isInteger()) {i = parseInt(input);}
+    if(currMap.has(input)) {i = currMap.get(input);}
+    if(i != -1)
+        return price[i];
+    else
+        return "輸入錯誤!";
 }
 
 /*$"OnMessage 訊息事件\n" +
@@ -49,38 +75,30 @@ $"頻道 ID: {ev.Source.Id}\n" +
 $"用戶 ID: {ev.Source.UserId}");*/
 async function reply(event){
     if (event.message.type = 'text') {
-        console.log(event.source.userId);
-        if(!userState.has(event.source.userId)){}
+        let userId = event.source.userId;
+        console.log(userId);
+        if(!userState.has(userId)) {userState.set(userId, 0);}
         
-        var msg = event.message.text;
+        let state = userState.get(userId);
+        let msg;
+        switch(state) {
+            case 0:
+                msg = await listCurrency();
+                userState.set(userId, 1);
+                break;
+            case 1:
+                msg = await askCurrency(event.message.text);
+                break;
+        }
 
-        let data = await listCurrency();
-        //收到文字訊息時，直接把收到的訊息傳回去
-        event.reply(data).then(function(data) {
-            // 傳送訊息成功時，可在此寫程式碼 
-            console.log(data);
-        }).catch(function(error) {
-            // 傳送訊息失敗時，可在此寫程式碼 
-            console.log('錯誤產生，錯誤碼：'+error);
-        });
+        if(msg != "") {
+            event.reply(msg)
+                .then(function(msg) {console.log(msg);})
+                .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);}); 
+            console.log(userState);
+        }else {
 
-        /*
-        await axios.get("https://rate.bot.com.tw/xrt?Lang=zh-TW").then((res) => { 
-                var $ = cheerio.load(res.data);
-                var target = $(".rate-content-sight.text-right.print_hide");
-                data = target[15].children[0].data.trim();
-
-                //收到文字訊息時，直接把收到的訊息傳回去
-                event.reply(data).then(function(data) {
-                    // 傳送訊息成功時，可在此寫程式碼 
-                    console.log(data);
-                }).catch(function(error) {
-                    // 傳送訊息失敗時，可在此寫程式碼 
-                    console.log('錯誤產生，錯誤碼：'+error);
-                });})
-            .catch((error) => { console.error(error) })
-            .finally(() => {  /*不論失敗成功皆會執行  })*/
-      
+        }     
     }
 }
 
