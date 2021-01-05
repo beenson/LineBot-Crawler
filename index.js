@@ -35,8 +35,8 @@ async function crawlPrice() {
             temp2.push((index + 1) + '.' + element);
             
             let spli = element.split(' ');
-            currency.push(spli[0], index);
-            currency.push(spli[1].substring(1, 4), index);
+            currency.push(spli[0]);
+            currency.push(spli[1].substring(1, 4));
         });
         currList = temp2.join('\r\n');
     }
@@ -68,8 +68,9 @@ async function askCurrency(input) {
 async function contain(txt, arr) {
     let index = -1;
     arr.forEach((e, i) => {
-        if(txt.includes(e))
-            index = i / 2;
+        if(txt.includes(e)){
+            index = Math.floor(i / 2);
+        }
     });
     return index;
 }
@@ -101,18 +102,17 @@ async function reply(event){
                 userState.set(userId, 0);
                 break;
         }
+
         console.log(price);
         console.log(msg);
-        if(msg != '') {
-            event.reply(msg)
-                .then(function(msg) {console.log(msg);})
-                .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);}); 
-            console.log(userState);
-        }else {
-            event.reply("What are you talking about???")
-                .then(function(msg) {console.log(msg);})
-                .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);}); 
+
+        if(msg == '') {
+            msg = "What are you talking about???";
         }
+
+        event.reply(msg)
+            .then(function(msg) {console.log(msg);})
+            .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
         console.log(userState);
     }
 }
