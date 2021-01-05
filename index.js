@@ -85,8 +85,8 @@ async function reply(event){
         let msg;
         switch(state) {
             case 0:
-                if(currMap.has(rec)) {
-                    askCurrency(msg);
+                if(await contain(rec, currency) != -1) {
+                    msg = askCurrency(rec);
                     break;
                 }
 
