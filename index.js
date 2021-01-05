@@ -31,8 +31,8 @@ async function crawlPrice() {
                 currency.push(element.children[0].data.trim());
         });
 
+        let temp = [];
         currency.forEach((element, index) => {
-            let temp = [];
             temp.push((index + 1) + '.' + element);
             
             let spli = element.split(' ');
