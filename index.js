@@ -101,7 +101,8 @@ async function reply(event){
                 userState.set(userId, 0);
                 break;
         }
-
+        console.log(price);
+        console.log(msg);
         if(msg != '') {
             event.reply(msg)
                 .then(function(msg) {console.log(msg);})
