@@ -34,12 +34,12 @@ async function crawlPrice() {
         currency.forEach((element, index) => {
             let temp = [];
             temp.push((index + 1) + '.' + element);
-            currList = temp.join('\r\n');
             
             let spli = element.split(' ');
             currMap.set(spli[0], index);
             currMap.set(spli[1].substring(1, 4), index);
         });
+        currList = temp.join('\r\n');
     }
 
     price = [];
@@ -59,7 +59,7 @@ async function listCurrency() {
 async function askCurrency(input) {
     await crawlPrice();
     let i = -1;
-    if(Number.isInteger()) {i = parseInt(input);}
+    if(Number.isInteger(input)) {i = parseInt(input);}
     if(currMap.has(input)) {i = currMap.get(input);}
     if(i != -1)
         return price[i];
@@ -88,6 +88,7 @@ async function reply(event){
                 break;
             case 1:
                 msg = await askCurrency(event.message.text);
+                userState.set(userId, 0);
                 break;
         }
 
