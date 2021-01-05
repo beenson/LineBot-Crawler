@@ -18,12 +18,16 @@ var bot = linebot({
 async function crawlPrice() {
     let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
     var $ = cheerio.load(res.data);
-    var cur = $(".visible-phone.print_hide");
+    if(currency.length == 0) {
+        var cur = $(".visible-phone.print_hide");
+        cur.each((index, element) => {
+            if(element.children.length == 1)
+                currency.push(element.children[0].data.trim());
+        });
+    }
+    
+    price = [];
     var pri = $(".rate-content-sight.text-right.print_hide");
-    cur.each((index, element) => {
-        if(element.children.length == 1)
-            currency.push(element.children[0].data.trim());
-    });
     pri.each((index, element) => {
         if(index % 2 == 0)
             price.push(element.children[0].data.trim());
