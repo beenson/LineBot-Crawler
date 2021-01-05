@@ -82,7 +82,7 @@ async function reply(event){
         
         let state = userState.get(userId);
         let rec = event.message.text;
-        let msg;
+        let msg = '';
         switch(state) {
             case 0:
                 if(await contain(rec, currency) != -1) {
@@ -102,14 +102,17 @@ async function reply(event){
                 break;
         }
 
-        if(msg != "") {
+        if(msg != '') {
             event.reply(msg)
                 .then(function(msg) {console.log(msg);})
                 .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);}); 
             console.log(userState);
         }else {
-
-        }     
+            event.reply("What are you talking about???")
+                .then(function(msg) {console.log(msg);})
+                .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);}); 
+        }
+        console.log(userState);
     }
 }
 /*{
