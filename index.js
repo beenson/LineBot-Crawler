@@ -31,6 +31,7 @@ async function crawlPrice() {
 };
 
 async function listCurrency() {
+    await crawlPrice();
     let temp = [];
     currency.forEach((element, index) => {temp.push((index + 1) + '.' + element)})
     return temp.join('\r\n')
@@ -44,8 +45,8 @@ $"頻道 ID: {ev.Source.Id}\n" +
 $"用戶 ID: {ev.Source.UserId}");*/
 async function reply(event){
     if (event.message.type = 'text') {
-        console.log(event);
-        if(!userState.has(event.message.UserId)){}
+        console.log(event.source.userId);
+        if(!userState.has(event.source.userId)){}
         
         var msg = event.message.text;
 
