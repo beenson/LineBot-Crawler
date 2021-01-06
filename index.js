@@ -22,10 +22,9 @@ var bot = linebot({
 
 async function crawlPrice() {
     let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
-    var $ = cheerio.load(res.data);
     if(currList == '') {
         let temp1 = [], temp2 = [];
-        var cur = $(".visible-phone.print_hide");
+        var cur = cheerio.load(res.data)(".visible-phone.print_hide");
         cur.each((index, element) => {
             if(element.children.length == 1)
                 temp1.push(element.children[0].data.trim());
@@ -42,7 +41,7 @@ async function crawlPrice() {
     }
 
     price = [];
-    var pri = $(".rate-content-sight.text-right.print_hide");
+    var pri = cheerio.load(res.data)(".rate-content-sight.text-right.print_hide");
     pri.each((index, element) => {
         if(index % 2 == 0)
             price.push(element.children[0].data.trim());
@@ -60,7 +59,7 @@ async function askCurrency(input) {
     let i = await contain(input, currency);
     if(!isNaN(input)) {i = parseInt(input) - 1;}
     if(i != -1)
-        return price[i];
+        return `${currency[i]}(${currency[i + 1]})匯率:${price[i]}`;
     else
         return "輸入錯誤!";
 }
