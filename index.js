@@ -59,7 +59,7 @@ async function askCurrency(input) {
     let i = await contain(input, currency);
     if(!isNaN(input)) {i = parseInt(input) - 1;}
     if(i != -1)
-        return `${currency[i]}(${currency[i + 1]})匯率:${price[i]}`;
+        return `${currency[i]}(${currency[i + 1]})匯率: ${price[i]}`;
     else
         return "輸入錯誤!";
 }
@@ -76,6 +76,7 @@ async function contain(txt, arr) {
 
 async function reply(event){
     if (event.message.type = 'text') {
+        let startTime = Date.now();
         let userId = event.source.userId;
         console.log(userId);
         if(!userState.has(userId)) {userState.set(userId, 0);}
@@ -102,17 +103,19 @@ async function reply(event){
                 break;
         }
 
-        console.log(price);
-        console.log(msg);
-
         if(msg == '') {
             msg = "What are you talking about???";
         }
 
+        console.log(msg);
+
         event.reply(msg)
             .then(function(msg) {console.log(msg);})
             .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
+
         console.log(userState);
+        let endTime = Date.now();
+        console.log(String(endTime - startTime) + ' milliseconds');
     }
 }
 /*{
