@@ -58,7 +58,7 @@ async function listCurrency() {
 async function askCurrency(input) {
     await crawlPrice();
     let i = await contain(input, currency);
-    if(Number.isInteger(input)) {i = parseInt(input);}
+    if(!isNaN(input)) {i = parseInt(input);} //TODO : It dont work like this
     if(i != -1)
         return price[i];
     else
