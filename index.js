@@ -103,7 +103,7 @@ async function askCurrency(input) {
 }
 
 async function contain(txt, arr) {
-    txt.replace(/台/g, '臺');
+    txt = txt.replace(/台/g, '臺');
     let index = -1;
     arr.forEach((e, i) => {
         if(txt.includes(e)){
