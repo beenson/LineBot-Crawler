@@ -6,12 +6,17 @@ let axios = require("axios");
 var userState = new Map();
 //0 : Request
 //1 : Asking Currency
-//2 : Asking Weather
+//2 : Asking Weather(Location)
 //3 : Asking Stocks
+
+let errMsg = '輸入錯誤!';
 
 let currency = [];
 let currList = '';
 let price = [];
+
+let locationNames = ["宜蘭縣", "花蓮縣", "臺東縣", "澎湖縣", "金門縣", "連江縣", "臺北市", "新北市", "桃園市", "臺中市", "臺南市", "高雄市", "基隆市", "新竹縣", "新竹市", "苗栗縣", "彰化縣", "南投縣", "雲林縣", "嘉義縣", "嘉義市", "屏東縣"];
+let locList = '';
 
 var bot = linebot({
   channelId: '1655539879',
@@ -19,6 +24,40 @@ var bot = linebot({
   channelAccessToken: 'ocCkvl0ipy7Fiw3tMA0nkeux0I82q1MM5vZIBA4PR3dEZKWoA9Yz1rCw9OnJAINKdtyjSiyoRE8L8SaFetDt9Cswr0wXYq52iuxFoGeSeHS+st0jDiomoYFFIHd2za3Fn7fd1qeSVqWMwX4zk0tEowdB04t89/1O/w1cDnyilFU='
 });
 
+
+async function getData(location) {
+    let req = await axios.get('https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091', { 
+        params: { 
+            Authorization: 'CWB-E677A3BA-BAFF-460F-84DB-08211D230139' , // 授權碼
+            format: "JSON",
+            locationName: location, // 城市
+            elementName : "WeatherDescription"
+        }
+    });
+    return req;
+}
+
+async function getWeather(input) {
+    let i = await contain(input, locationNames);
+    if(!isNaN(input)) {i = parseInt(input) - 1;}
+
+    if(i != -1) {
+        let res = await getData(locationNames[i]);// call API
+        return res.data.records.locations[0].location[0].weatherElement[0].time[0].elementValue[0].value.replace(/。/g, '\r\n');
+    }
+    return errMsg;
+}
+
+async function listLocations(){
+    if(locList == '') {
+        let temp = [];
+        locationNames.forEach((element, index) => {
+            temp.push((index + 1) + '.' + element);
+        });
+        locList = temp.join('\r\n');
+    }
+    return locList;
+}
 
 async function crawlPrice() {
     let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
@@ -56,24 +95,24 @@ async function listCurrency() {
 
 async function askCurrency(input) {
     await crawlPrice();
-    let i = await contain(input, currency);
+    let i = Math.floor(await contain(input, currency) / 2);
     if(!isNaN(input)) {i = parseInt(input) - 1;}
     if(i != -1)
         return `${currency[i]}(${currency[i + 1]})匯率: ${price[i]}`;
-    else
-        return "輸入錯誤!";
+    return errMsg;
 }
 
 async function contain(txt, arr) {
     let index = -1;
     arr.forEach((e, i) => {
         if(txt.includes(e)){
-            index = Math.floor(i / 2);
+            index = i;
         }
     });
     return index;
 }
 
+//https://developers.line.biz/en/reference/messaging-api/#message-event
 async function reply(event){
     if (event.message.type = 'text') {
         let startTime = Date.now();
@@ -96,9 +135,24 @@ async function reply(event){
                     userState.set(userId, 1);
                     break;
                 }
+
+                if(await contain(rec, locationNames) != -1) {
+                    msg = await getWeather(rec);
+                    break;
+                }
+
+                if(rec.includes('天氣')) {
+                    msg = "請選擇縣市:\r\n" + await listLocations();
+                    userState.set(userId, 2);
+                    break;
+                }
                 break;
             case 1:
                 msg = await askCurrency(rec);
+                userState.set(userId, 0);
+                break;
+            case 2:
+                msg = await getWeather(rec);
                 userState.set(userId, 0);
                 break;
         }
@@ -118,25 +172,6 @@ async function reply(event){
         console.log(String(endTime - startTime) + ' milliseconds');
     }
 }
-/*{
-  type: 'message',
-  replyToken: '71508909ef9a4e79b92954bfc8da0862',
-  source: {
-    userId: 'U9d5868633c1febd1db045277e64726cc',
-    type: 'user',
-    profile: [Function],
-    member: [Function]
-  },
-  timestamp: 1609857295470,
-  mode: 'active',
-  message: {
-    type: 'text',
-    id: '13329988909525',
-    text: '.',
-    content: [Function]
-  },
-  reply: [Function]
-}*/
 
 crawlPrice();
 
@@ -148,6 +183,6 @@ const linebotParser = bot.parser();
 app.post('/', linebotParser);
 
 var server = app.listen(process.env.PORT || 8080, function() {
-  var port = server.address().port;
-  console.log('目前的port是', port);
+    var port = server.address().port;
+    console.log('目前的port是', port);
 });
