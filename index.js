@@ -106,7 +106,7 @@ async function contain(txt, arr) {
     txt = txt.replace(/台/g, '臺');
     let index = -1;
     arr.forEach((e, i) => {
-        if(txt.includes(e)){
+        if(txt.includes(e.replace(/市|縣/g, ''))){
             index = i;
         }
     });
