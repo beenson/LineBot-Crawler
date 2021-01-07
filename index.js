@@ -43,7 +43,7 @@ async function getWeather(input) {
 
     if(i != -1) {
         let res = await getData(locationNames[i]);// call API
-        return res.data.records.locations[0].location[0].weatherElement[0].time[0].elementValue[0].value.replace(/。/g, '\r\n');
+        return locationNames[i] + '天氣:\r\n' + res.data.records.locations[0].location[0].weatherElement[0].time[0].elementValue[0].value.replace(/。/g, '\r\n');
     }
     return errMsg;
 }
@@ -103,6 +103,7 @@ async function askCurrency(input) {
 }
 
 async function contain(txt, arr) {
+    txt.replace(/台/g, '臺');
     let index = -1;
     arr.forEach((e, i) => {
         if(txt.includes(e)){
