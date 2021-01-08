@@ -59,7 +59,9 @@ async function listLocations(){
     return locList;
 }
 
+
 async function crawlPrice() {
+    let startTime = Date.now();
     let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
     if(currList == '') {
         let temp1 = [], temp2 = [];
@@ -78,14 +80,19 @@ async function crawlPrice() {
         });
         currList = temp2.join('\r\n');
     }
+    let endTime = Date.now();
+    console.log('axois get:' + String(endTime - startTime) + ' milliseconds');
 
     price = [];
+    startTime = Date.now();
     var pri = cheerio.load(res.data)(".rate-content-sight.text-right.print_hide");
     pri.each((index, element) => {
         if(index % 2 == 0)
             price.push(element.children[0].data.trim());
     });
-};
+    let endTime = Date.now();
+    console.log('price:' + String(endTime - startTime) + ' milliseconds');
+}
 
 async function listCurrency() {
     if(currList == '')
@@ -101,6 +108,7 @@ async function askCurrency(input) {
         return `${currency[i]}(${currency[i + 1]})匯率: ${price[i]}`;
     return errMsg;
 }
+
 
 async function contain(txt, arr) {
     txt = txt.replace(/台/g, '臺');
@@ -155,6 +163,8 @@ async function reply(event){
             case 2:
                 msg = await getWeather(rec);
                 userState.set(userId, 0);
+                break;
+            case 3:
                 break;
         }
 
