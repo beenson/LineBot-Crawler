@@ -80,7 +80,7 @@ async function crawlPrice() {
         });
         currList = temp2.join('\r\n');
     }
-    endTime = Date.now();
+    let endTime = Date.now();
     console.log('axois get:' + String(endTime - startTime) + ' milliseconds');
 
     price = [];
@@ -90,7 +90,7 @@ async function crawlPrice() {
         if(index % 2 == 0)
             price.push(element.children[0].data.trim());
     });
-    let endTime = Date.now();
+    endTime = Date.now();
     console.log('price:' + String(endTime - startTime) + ' milliseconds');
 }
 
