@@ -158,6 +158,7 @@ async function reply(event){
                 break;
             case 1:
                 msg = await askCurrency(rec);
+                console.log(price);
                 userState.set(userId, 0);
                 break;
             case 2:
