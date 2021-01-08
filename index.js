@@ -105,7 +105,7 @@ async function askCurrency(input) {
     let i = Math.floor(await contain(input, currency) / 2);
     if(!isNaN(input)) {i = parseInt(input) - 1;}
     if(i != -1)
-        return `${currency[i]}(${currency[i + 1]})匯率: ${price[i]}`;
+        return `${currency[2 * i]}(${currency[2 * i + 1]})匯率: ${price[i]}`;
     return errMsg;
 }
 
