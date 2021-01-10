@@ -1,9 +1,9 @@
-var linebot = require('linebot');
-var express = require('express');
-var request = require("request");
-var cheerio = require("cheerio");
+let linebot = require('linebot');
+let express = require('express');
+let request = require("request");
+let cheerio = require("cheerio");
 let axios = require("axios");
-var userState = new Map();
+let userState = new Map();
 //0 : Request
 //1 : Asking Currency
 //2 : Asking Weather(Location)
@@ -18,10 +18,10 @@ let price = [];
 let locationNames = ["宜蘭縣", "花蓮縣", "臺東縣", "澎湖縣", "金門縣", "連江縣", "臺北市", "新北市", "桃園市", "臺中市", "臺南市", "高雄市", "基隆市", "新竹縣", "新竹市", "苗栗縣", "彰化縣", "南投縣", "雲林縣", "嘉義縣", "嘉義市", "屏東縣"];
 let locList = '';
 
-var bot = linebot({
-  channelId: '1655539879',
-  channelSecret: '4588f1904c142910dfcc7a8fa79fec25',
-  channelAccessToken: 'ocCkvl0ipy7Fiw3tMA0nkeux0I82q1MM5vZIBA4PR3dEZKWoA9Yz1rCw9OnJAINKdtyjSiyoRE8L8SaFetDt9Cswr0wXYq52iuxFoGeSeHS+st0jDiomoYFFIHd2za3Fn7fd1qeSVqWMwX4zk0tEowdB04t89/1O/w1cDnyilFU='
+let bot = linebot({
+    channelId: '1655539879',
+    channelSecret: '4588f1904c142910dfcc7a8fa79fec25',
+    channelAccessToken: 'ocCkvl0ipy7Fiw3tMA0nkeux0I82q1MM5vZIBA4PR3dEZKWoA9Yz1rCw9OnJAINKdtyjSiyoRE8L8SaFetDt9Cswr0wXYq52iuxFoGeSeHS+st0jDiomoYFFIHd2za3Fn7fd1qeSVqWMwX4zk0tEowdB04t89/1O/w1cDnyilFU='
 });
 
 
@@ -43,7 +43,7 @@ async function getWeather(input) {
 
     if(i != -1) {
         let res = await getData(locationNames[i]);// call API
-        return locationNames[i] + '天氣:\r\n' + res.data.records.locations[0].location[0].weatherElement[0].time[0].elementValue[0].value.replace(/。/g, '\r\n');
+        return locationNames[i] + '天氣:\r\n' + res.data.records.locations[0].location[0].weatherElement[0].time[0].elementValue[0].value.replace(/\r|\n/g, '').replace(/。/g, '\r\n');
     }
     return errMsg;
 }
@@ -65,7 +65,7 @@ async function crawlPrice() {
     let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
     if(currList == '') {
         let temp1 = [], temp2 = [];
-        var cur = cheerio.load(res.data)(".visible-phone.print_hide");
+        let cur = cheerio.load(res.data)(".visible-phone.print_hide");
         cur.each((index, element) => {
             if(element.children.length == 1)
                 temp1.push(element.children[0].data.trim());
@@ -85,7 +85,7 @@ async function crawlPrice() {
 
     price = [];
     startTime = Date.now();
-    var pri = cheerio.load(res.data)(".rate-content-sight.text-right.print_hide");
+    let pri = cheerio.load(res.data)(".rate-content-sight.text-right.print_hide");
     pri.each((index, element) => {
         if(index % 2 == 0)
             price.push(element.children[0].data.trim());
@@ -158,7 +158,6 @@ async function reply(event){
                 break;
             case 1:
                 msg = await askCurrency(rec);
-                console.log(currency);
                 userState.set(userId, 0);
                 break;
             case 2:
@@ -194,7 +193,7 @@ const app = express();
 const linebotParser = bot.parser();
 app.post('/', linebotParser);
 
-var server = app.listen(process.env.PORT || 8080, function() {
-    var port = server.address().port;
+let server = app.listen(process.env.PORT || 8080, function() {
+    let port = server.address().port;
     console.log('目前的port是', port);
 });
