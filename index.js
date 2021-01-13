@@ -178,6 +178,7 @@ async function reply(event){
                                         let msg = doc.data().content.replace(/\r\n/g, '\r\n');
                                         event.reply(msg)
                                             .then(function(msg) {console.log(msg);})
+                                            .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
                                     })
                                 } )
                                 // Failed
