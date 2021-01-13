@@ -110,6 +110,11 @@ async function askCurrency(input) {
 }
 
 
+async function getRandomInt(min, max) {
+    return Math.floor(Math.random() * Math.floor(max - min + 1)) + min;
+}
+
+
 async function contain(txt, arr) {
     txt = txt.replace(/台/g, '臺');
     let index = -1;
@@ -155,6 +160,35 @@ async function reply(event){
                     userState.set(userId, 2);
                     break;
                 }
+
+                if(rec.includes('笑話')) {
+                    db.collection("jokes")
+                        .orderBy("index", 'desc').limit(1).get()
+                        .then( function(collection) {
+                            collection.forEach( function(doc){
+                                max = doc.data().index;
+
+                                db
+                                .collection("jokes")
+                                .where("index", "==", randomNum(1, max))
+                                .get()
+                                // Success
+                                .then(function(collection){
+                                    collection.forEach(function(doc){
+                                        let msg = doc.data().content.replace(/\r\n/g, '\r\n');
+                                        event.reply(msg)
+                                            .then(function(msg) {console.log(msg);})
+                                    })
+                                } )
+                                // Failed
+                                .catch( function(err){
+                                    console.log('error', err)
+                                    alert("Try again")
+                                } )
+                            })
+                        })
+                }
+                
                 break;
             case 1:
                 msg = await askCurrency(rec);
@@ -164,8 +198,6 @@ async function reply(event){
                 msg = await getWeather(rec);
                 userState.set(userId, 0);
                 break;
-            case 3:
-                break;
         }
 
         if(msg == '') {
@@ -174,9 +206,11 @@ async function reply(event){
 
         console.log(msg);
 
-        event.reply(msg)
-            .then(function(msg) {console.log(msg);})
-            .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
+        if(!rec.includes('笑話')) {
+            event.reply(msg)
+                .then(function(msg) {console.log(msg);})
+                .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
+        }
 
         console.log(userState);
         let endTime = Date.now();
