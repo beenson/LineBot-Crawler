@@ -187,7 +187,7 @@ async function reply(event){
                                 // Success
                                 .then(function(collection){
                                     collection.forEach(function(doc){
-                                        let msg = doc.data().content.replace(/\r\n/g, '\r\n');
+                                        let msg = doc.data().content.replace(/\\r\\n/g, '\r\n');
                                         event.reply(msg)
                                             .then(function(msg) {console.log(msg);})
                                             .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
