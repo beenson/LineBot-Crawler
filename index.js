@@ -218,9 +218,9 @@ async function reply(event){
             msg = "What are you talking about???";
         }
 
-        console.log(msg);
 
         if(!rec.includes('笑話')) {
+            console.log(msg);
             event.reply(msg)
                 .then(function(msg) {console.log(msg);})
                 .catch(function(error) {console.log('錯誤產生，錯誤碼：'+error);});
