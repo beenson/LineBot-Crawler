@@ -110,7 +110,7 @@ async function askCurrency(input) {
 }
 
 
-async function getRandomInt(min, max) {
+function randomNum(min, max) {
     return Math.floor(Math.random() * Math.floor(max - min + 1)) + min;
 }
 
@@ -167,7 +167,7 @@ async function reply(event){
                         .then( function(collection) {
                             collection.forEach( function(doc){
                                 max = doc.data().index;
-
+                
                                 db
                                 .collection("jokes")
                                 .where("index", "==", randomNum(1, max))
@@ -188,7 +188,7 @@ async function reply(event){
                             })
                         })
                 }
-                
+
                 break;
             case 1:
                 msg = await askCurrency(rec);
