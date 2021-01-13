@@ -5,7 +5,6 @@ let cheerio = require("cheerio");
 let axios = require("axios");
 let firebase = require("firebase");
 require("firebase/firestore");
-var db = firebase.firestore();
 let userState = new Map();
 //0 : Request
 //1 : Asking Currency
@@ -20,6 +19,7 @@ let firebaseConfig = {
     appId: "1:1027510141351:web:915668cc0291e2f968f682"
 };
 firebase.initializeApp(firebaseConfig);
+let db = firebase.firestore();
 
 let errMsg = '輸入錯誤!';
 
