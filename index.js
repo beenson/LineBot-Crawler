@@ -3,11 +3,23 @@ let express = require('express');
 let request = require("request");
 let cheerio = require("cheerio");
 let axios = require("axios");
+let firebase = require("firebase");
+require("firebase/firestore");
+var db = firebase.firestore();
 let userState = new Map();
 //0 : Request
 //1 : Asking Currency
 //2 : Asking Weather(Location)
-//3 : Asking Stocks
+
+let firebaseConfig = {
+    apiKey: "AIzaSyDL6UGRwlhqQm9bD6VBaXfdNevU2uJYbrU",
+    authDomain: "finalproject-3c588.firebaseapp.com",
+    projectId: "finalproject-3c588",
+    storageBucket: "finalproject-3c588.appspot.com",
+    messagingSenderId: "1027510141351",
+    appId: "1:1027510141351:web:915668cc0291e2f968f682"
+};
+firebase.initializeApp(firebaseConfig);
 
 let errMsg = '輸入錯誤!';
 
