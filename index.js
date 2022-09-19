@@ -74,7 +74,7 @@ async function listLocations(){
 
 async function crawlPrice() {
     let startTime = Date.now();
-    let res = await axios.get("http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm");
+    let res = await axios.get("https://rate.bot.com.tw/xrt?Lang=zh-TW");
     if(currList == '') {
         let temp1 = [], temp2 = [];
         let cur = cheerio.load(res.data)(".visible-phone.print_hide");
